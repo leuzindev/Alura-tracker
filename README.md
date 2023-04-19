@@ -1,6 +1,6 @@
 # alura-tracker
 
-### Projeto rodando em [https://alura-tracker-16vyaja3k-leuzindev.vercel.app](https://alura-tracker-rouge.vercel.app)
+### Projeto rodando em https://alura-tracker-rouge.vercel.app
 
 ## Project setup
 ```
