@@ -61,7 +61,7 @@ main {
 
 main.modo-escuro {
   --bg-primario: #2b2d42;
-  --texto-primario: #ddd;
+  --texto-primario: #8b8b8b;
 }
 
 .conteudo {
