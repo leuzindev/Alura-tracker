@@ -1,5 +1,7 @@
 # alura-tracker
 
+### Projeto rodando em https://alura-tracker-16vyaja3k-leuzindev.vercel.app
+
 ## Project setup
 ```
 npm install
