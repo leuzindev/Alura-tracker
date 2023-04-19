@@ -1,6 +1,6 @@
 import { TipoDeNotificacao } from "@/interfaces/INotificacao"
 import { store } from "@/store"
-import { NOTIFICAR } from "@/store/mutations-types"
+import { NOTIFICAR } from "@/store/tipo-mutations"
 
 
 type Notificador = {

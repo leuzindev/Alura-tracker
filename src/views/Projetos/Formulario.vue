@@ -21,9 +21,11 @@
 
 import { defineComponent } from 'vue';
 import { useStore } from '@/store';
-import { ADICIONA_PROJETO, ALTERA_PROJETO } from '@/store/mutations-types';
+import { ALTERAR_PROJETO } from '@/store/tipo-acoes';
 import { TipoDeNotificacao } from '@/interfaces/INotificacao';
-import  useNotificador  from '@/hooks/notificador'
+import { CADASTRAR_PROJETO } from '@/store/tipo-acoes';
+import useNotificador from '@/hooks/notificador'
+
 export default defineComponent({
     name: 'Formulario',
     props: {
@@ -34,6 +36,7 @@ export default defineComponent({
     mounted() {
         if (this.id) {
             const projeto = this.store.state.projetos.find(projeto => projeto.id === this.id)
+            console.log(projeto)
             this.nomeDoProjeto = projeto?.nome || ''
         }
     },
@@ -45,29 +48,31 @@ export default defineComponent({
     methods: {
         salvar() {
             if (this.id) {
-                this.store.commit(ALTERA_PROJETO, {
+                this.store.dispatch(ALTERAR_PROJETO, {
                     id: this.id,
-                    nome: this.nomeDoProjeto
-                })
+                    nome: this.nomeDoProjeto,
+                }).then(() => this.lidarComSucesso())
             } else {
-                this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto)
+                this.store.dispatch(CADASTRAR_PROJETO, this.nomeDoProjeto)
+                    .then(() => this.lidarComSucesso())
             }
+        },
+        lidarComSucesso() {
             this.nomeDoProjeto = ''
-            
             this.notificar(
                 TipoDeNotificacao.SUCESSO,
-                    'Excelente !',
-                    'O projeto foi cadastrado com sucesso !'
-                )
+                'Excelente !',
+                'O projeto foi cadastrado com sucesso !'
+            )
             this.$router.push('/projetos')
-        },
-       
+        }
+
     },
     setup() {
         const store = useStore()
         const { notificar } = useNotificador()
         return {
-            store, 
+            store,
             notificar
 
         }
@@ -77,7 +82,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.label{
-    color: var(--texto-primario) ;
+.label {
+    color: var(--texto-primario);
 }
 </style>

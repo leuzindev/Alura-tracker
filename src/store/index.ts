@@ -1,12 +1,16 @@
 import IProjeto from "@/interfaces/IProjeto";
 import { InjectionKey } from "vue";
 import { Store, createStore, useStore as vuexUseStore } from "vuex";
-import { ADICIONA_PROJETO, ALTERA_PROJETO, EXCLUIR_PROJETO, NOTIFICAR } from "./mutations-types";
+import { ADICIONA_PROJETO, ALTERA_PROJETO, DEFINIR_PROJETOS, DEFINIR_TAREFAS, EXCLUIR_PROJETO, NOTIFICAR } from "./tipo-mutations";
 import INotificacao from "@/interfaces/INotificacao";
+import { ALTERAR_PROJETO, CADASTRAR_PROJETO, OBTER_PROJETOS, OBTER_TAREFAS, REMOVER_PROJETO } from "./tipo-acoes";
+import api from "@/http";
+import ITarefa from "@/interfaces/ITarefa";
 
 
 interface Estado {
     projetos: IProjeto[],
+    tarefas: ITarefa[],
     notificacoes: INotificacao[]
 }
 
@@ -14,8 +18,9 @@ export const key: InjectionKey<Store<Estado>> = Symbol()
 
 export const store = createStore<Estado>({
     state: {
+        tarefas: [],
         projetos: [],
-        notificacoes: []
+        notificacoes: [],
     },
     mutations: {
         [ADICIONA_PROJETO](state, nomeDoProjeto: string) {
@@ -34,6 +39,12 @@ export const store = createStore<Estado>({
         [EXCLUIR_PROJETO](state, id: string) {
             state.projetos = state.projetos.filter(projeto => projeto.id != id)
         },
+        [DEFINIR_PROJETOS](state, projetos: IProjeto[]) {
+            state.projetos = projetos
+        },
+        [DEFINIR_TAREFAS](state, tarefas: ITarefa[]) {
+            state.tarefas = tarefas
+        },
         [NOTIFICAR](state, novaNotificacao: INotificacao) {
             novaNotificacao.id = new Date().getTime()
             state.notificacoes
@@ -43,6 +54,27 @@ export const store = createStore<Estado>({
                     .filter(notificacao => notificacao.id != novaNotificacao.id)
             }, 3000)
         }
+    },
+    actions: {
+        [OBTER_PROJETOS] ({ commit }) {
+            api.get('projetos')
+                .then(res => commit(DEFINIR_PROJETOS, res.data))
+        },
+        [CADASTRAR_PROJETO] (contexto, nomeDoProjeto: string) {
+            return api.post('projetos', {
+                nome: nomeDoProjeto
+            })
+        },
+        [ALTERAR_PROJETO] (conxtexo , projeto: IProjeto) {
+            return api.put(`projetos/${projeto.id}`, projeto)
+        },
+        [REMOVER_PROJETO] ({ commit }, id: string) {
+            return api.delete(`projetos/${id}`).then(() => commit(EXCLUIR_PROJETO, id))
+        },
+        [OBTER_TAREFAS] ({ commit }) {
+            api.get('tarefas')
+                .then(res => commit(DEFINIR_TAREFAS, res.data))
+        },
     }
 })
 
